@@ -1,43 +1,42 @@
-const requestWeatherForecastsType = 'REQUEST_WEATHER_FORECASTS';
-const receiveWeatherForecastsType = 'RECEIVE_WEATHER_FORECASTS';
-const initialState = { forecasts: [], isLoading: false };
+const getMastersRequest = 'GET_MASTERS_REQUEST';
+const getMastersReceive = 'GET_MASTERS_RECEIVE';
+const initialState = { masters: [], isLoading: false };
 
 export const actionCreators = {
-  requestWeatherForecasts: startDateIndex => async (dispatch, getState) => {
-    if (startDateIndex === getState().weatherForecasts.startDateIndex) {
-      // Don't issue a duplicate request (we already have or are loading the requested data)
-      return;
+    getMastersRequest: masterId => async (dispatch, getState) => {
+        if (masterId === getState().masters.masterId) {
+        // Don't issue a duplicate request (we already have or are loading the requested data)
+        return;
     }
 
-    dispatch({ type: requestWeatherForecastsType, startDateIndex });
+        dispatch({ type: getMastersRequest, masterId });
 
-    const url = `api/Master/${startDateIndex}`;
-    const response = await fetch(url);
-    const forecasts = await response.json();
-      console.log(forecasts)
-    dispatch({ type: receiveWeatherForecastsType, startDateIndex, forecasts });
-  }
+        const url = `api/Master/${masterId}`;
+        const response = await fetch(url);
+        const master = await response.json();
+        dispatch({ type: getMastersReceive, masterId, master });
+    }
 };
 
 export const reducer = (state, action) => {
-  state = state || initialState;
+    state = state || initialState;
 
-  if (action.type === requestWeatherForecastsType) {
-    return {
-      ...state,
-      startDateIndex: action.startDateIndex,
-      isLoading: true
+    if (action.type === getMastersRequest) {
+        return {
+            ...state,
+            masterId: action.masterId,
+            isLoading: true
     };
-  }
+    }
 
-  if (action.type === receiveWeatherForecastsType) {
-    return {
-      ...state,
-      startDateIndex: action.startDateIndex,
-      forecasts: action.forecasts,
-      isLoading: false
-    };
-  }
+    if (action.type === getMastersRequest) {
+        return {
+            ...state,
+            masterId: action.masterId,
+            masters: action.masters,
+            isLoading: false
+        };
+    }
 
-  return state;
+    return state;
 };

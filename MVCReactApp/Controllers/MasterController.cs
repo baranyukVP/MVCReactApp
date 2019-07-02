@@ -19,16 +19,29 @@ namespace MVCReactApp.Controllers
 
             if(_context.Masters.Count() == 0)
             {
-                _context.Masters.Add(new Master { Id = 0, Name = "default", Description = "No masters exist" });
+                _context.Masters.Add(new Master { Name = "default", Description = "No masters exist" });
                 _context.SaveChanges();
             }
+        }
+
+        [HttpGet("{0}")]
+        public async Task<ActionResult<List<Master>>> GetMaster()
+        {
+            var masters = await _context.Masters.ToAsyncEnumerable().ToList();
+
+            if (masters == null)
+            {
+                return NotFound();
+            }
+
+            return masters;
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Master>> GetMaster(int id)
         {
             var master = await _context.Masters.FindAsync(id);
-
+                
             if (master == null)
             {
                 return NotFound();
@@ -36,5 +49,19 @@ namespace MVCReactApp.Controllers
 
             return master;
         }
+
+        [HttpGet]
+        public async Task<ActionResult<List<Master>>> GetMasters()
+        {
+            var masters = await _context.Masters.ToAsyncEnumerable().ToList();
+            
+            if (masters == null)
+            {
+                return NotFound();
+            }
+
+            return masters;
+        }
+
     }
 }
